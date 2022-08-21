@@ -2,7 +2,8 @@ import './App.css';
 import { useEffect, useState } from 'react';
 
 import SplitPane from "react-split-pane";
-import {HtmlEditor, CssEditor, JavascriptEditor} from "./components/Editors"
+import {HtmlEditor, CssEditor, JavascriptEditor} from "./components/Editors";
+import {useDebounce} from "./utils/useDebounce"
 
 function App() {
 
@@ -13,20 +14,24 @@ function App() {
   const [jsValue, setJsValue] = useState('');
   const [outputValue, setOutputValue] = useState('');
 
+  const debouncedHtml = useDebounce(htmlValue, 1000);
+  const debouncedCss = useDebounce(cssValue, 1000);
+  const debouncedJs = useDebounce(jsValue, 1000);
+
   useEffect(()=>{
     const output = `
     <html>
-      <style>${cssValue}</style>
+      <style>${debouncedCss}</style>
       <body>
-      ${htmlValue}
+      ${debouncedHtml}
         <script text="text/javascript">
-          ${jsValue}
+          ${debouncedJs}
         </script>
       </body>
     </html>
     `;
     setOutputValue(output)
-  }, [htmlValue, cssValue, jsValue]);
+  }, [debouncedHtml, debouncedCss, debouncedJs]);
 
 
   return (
